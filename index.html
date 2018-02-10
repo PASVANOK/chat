@@ -1,80 +1,94 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<meta charset="UTF-8">
-	<script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
-	<style type="text/css">
-		body {
-			margin: 0;
-			font-size: 28px;
-		}
-		.panel {
-			position: fixed;
-			bottom: 0;
-			left: 0;
-			width: 100%;
-		    padding: 10px;
-		    box-sizing: border-box;
-		    background: #e2e2e2;
-		}
-		input {
-			font-size: inherit;
-			width: 100%;
-		}
-
-		.inputs {
-			display: flex;
-		}
-
-		.input-left {
-			max-width: 20%;
-			padding-right: 0.5em;
-		}
-
-		.input-left, .input-right {
-			flex-grow: 1;
-		}
-	</style>
-	<title>Chat</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.3/socket.io.js"></script>
+    <title>Chat</title>
+    <style>
+    body {
+        margin: 0;
+        font-size: 28px;
+        background: #363434;
+        color: #eee;
+        padding: 0;
+    }
+    .d {
+        padding-left: 8px;
+    }
+    .panel {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        padding: 10px;
+        box-sizing: border-box;
+        background: #862424;
+    }
+    input {
+        font-size: inherit;
+        width: 98%;
+        border: 0px solid black;
+        border-radius: 12px;
+        height: 60px;
+        background: #C3C3C3;
+        color: #3B3939;
+    }
+    input:focus {
+        outline: none;
+    }
+    .inputs {
+        display: flex;
+    }
+    .input-left {
+        max-width: 20%;
+        padding-right: 0.5em; 
+    }
+    .input-left, .input-right {
+        flex-grow: 1;
+    }
+    </style>
 </head>
 <body>
-	<div id="messages">
-		<p align="center" id="greeting">Добро пожаловать в чат!</p>
-	</div>
-	<div class="panel">
-		<form onsubmit="sendMessage(this.nickname.value, this.message.value); this.message.value = ''; return false">
-			<div class="inputs">
-				<div class="input-left">
-					<input name="nickname" placeholder="nickname" type="text" autofocus="" autocomplete="off"></input> 
-				</div>
-				<div class="input-right">
-					<input name="message" placeholder="message" type="text" autocomplete="off"></input>
-				</div>
-			</div>
-			<input type="submit" style="display: none" />
-		</form>
-	</div>
+    <div id="messages">
+        <p align="center" id="greeting">Добро Пожаловать!</p>
+    </div>
+    <div class="panel">
+        <form onsubmit="sendMessage(this.nickname.value, this.message.value); this.message.value = ''; return false;">
+        <div class="inputs">
+                <div class="input-left">
+                    <input maxlength="20" class="d" type="text" name="nickname" placeholder="nick name" autofocus="" autocomplete="off" required>  
+                </div>
+                <div class="input-right">
+                    <input class="d" type="text" name="message" placeholder="message" autocomplete="off">
+                </div>
+                <input type="submit" style="display: none;">
+            </form>
+        </div>
+    </div>
 
-	<script type="text/javascript">
-		var socket = io({transports: ['websocket']});
-		var messagesContainer = document.getElementById('messages');
+    <script>
+        var socket = io({transports: ['websocket']});
+        var messagesContainer = document.getElementById('messages');
 
-		socket.on('message', function(data) {
-			renderMessage(data);
-		})
+        socket.on('message', function(data) {
+            renderMessage(data);
+        });
 
-		function sendMessage(nickname, message) {
-			if(nickname && message)
-				socket.emit('message', renderMessage({nickname: nickname, message: message}));
-		}
+        function sendMessage(nickname, message) {
+            if (nickname && message) {
+                socket.emit('message', {nickname: nickname, message: message});
+                renderMessage({nickname: nickname, message: message});
+            }
+        }
 
-		function renderMessage(data) {
-			var div = document.createElement('DIV');
-			div.innerHTML = '<span><strong>' + data.nickname + ': </strong>' + data.message + '</span>';
-			messagesContainer.insertBefore(div, messagesContainer.firstChild);
-			document.getElementById('greeting').style.display = 'none';
-			return data;
-		}
-	</script>
+        function renderMessage(data) {
+                var div = document.createElement('DIV');
+                div.innerHTML = '<span><strong class="name">' + data.nickname + ': </strong>' + data.message + '</span>';
+                messagesContainer.insertBefore(div, messagesContainer.firstChild);
+                document.getElementById('greeting').style.display = "none";
+        }
+    </script>
 </body>
 </html>
